@@ -1,0 +1,135 @@
+//TODO: prevent apple respawn on inside trail array.
+//TODO: change collision detection method.
+//TODO: on collision: show collision before restarting
+//TODO: splash screen
+//TODO: highscore
+//TODO: show "play again?" after collision
+
+<html>
+<canvas id= "snake" width= "800" height= "800"></canvas>
+<head>
+    <script>
+        window.onload= function(){
+            canvas= document.getElementById("snake");
+            ctx= canvas.getContext("2d");
+            document.addEventListener("keydown", keyPress);
+            setInterval(game, 1000/15 );
+        }
+        xPos=yPos = 10;
+        xVelocity=yVelocity = 0;
+        gridSize= 40; tileCount = 20;
+        ax= ay= 15;
+        trail = []; //matrix will hold position of snake
+        tail = 5;
+        direction = 99; //8: up, 0: down, 9: right, 7: left^
+        score = 0;
+
+        function game(){
+            xPos += xVelocity;
+            yPos += yVelocity;
+            if(xPos < 0){
+                xPos = tileCount-1;
+            }
+            if(xPos > tileCount-1){
+                xPos = 0;
+            }
+            if(yPos < 0){
+                yPos = tileCount-1;
+            }
+            if(yPos > tileCount-1){
+                yPos = 0;
+            }
+
+            ctx.fillStyle="black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "lime";
+            for(var i = 0; i < trail.length; i++){
+                ctx.fillRect(trail[i].x*gridSize, trail[i].y*gridSize, gridSize-2, gridSize-2);   
+                if(trail[i].x == xPos && trail[i].y == yPos){
+                    reset();
+                }
+            }
+
+            trail.push({x:xPos, y:yPos});
+            while(trail.length > tail){
+                trail.shift();
+            }
+
+            if(ax == xPos && ay == yPos){
+                tail++;
+                score++;
+                setScoreText();
+                ax = Math.floor(Math.random() * tileCount);
+                ay = Math.floor(Math.random() * tileCount);
+            }
+
+            ctx.fillStyle = "red";
+            ctx.fillRect(ax*gridSize, ay*gridSize, gridSize-2, gridSize-2);
+
+        }
+
+        function reset(){
+            sleep(0.5);
+            tail = 5;
+            score = 0;
+            setScoreText();
+        }
+        function setScoreText(){
+            document.getElementById("scoreText").innerHTML = "Your Score: " + String(score);
+        }
+
+        function keyPress(event){
+            switch(event.keyCode){
+                case 37: //left
+                    if(direction == 9){
+                        break;
+                    }
+                    else{
+                        direction = 7;
+                        xVelocity = -1;
+                        yVelocity = 0;
+                        break;
+                    }
+                case 38: //up
+                    if(direction == 0){
+                        break;
+                    }
+                    else{
+                        direction = 8;
+                        xVelocity = 0;
+                        yVelocity = -1;
+                        break;
+                    }
+                case 39: //right
+                    if(direction == 7){
+                        break;
+                    }
+                    else{
+                        direction = 9;
+                        xVelocity = 1;
+                        yVelocity = 0;
+                        break;
+                    }
+                case 40: //down
+                    if(direction == 8){
+                        break;
+                    }
+                    else{
+                        direction = 0;
+                        xVelocity = 0;
+                        yVelocity = 1;
+                        break;
+                    }
+            }
+        }
+        function sleep(seconds){
+            e = new Date().getTime() + (seconds * 1000);
+            while (new Date().getTime() <= e) {}
+        }
+    </script>
+</head>
+<body>
+    <h1 id="scoreText" style="margin-left: 300px;">Your Score: 0</h1>
+</body>
+</html>
