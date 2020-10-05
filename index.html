@@ -1,13 +1,16 @@
-//TODO: prevent apple respawn on inside trail array.
-//TODO: change collision detection method.
-//TODO: on collision: show collision before restarting
-//TODO: splash screen
-//TODO: highscore
-//TODO: show "play again?" after collision
+<!--
+    TODO: prevent apple respawn on inside trail array []
+    TODO: change collision detection method []
+    TODO: on collision: show collision before restarting []
+    TODO: splash screen []
+    TODO: highscore [X]
+    TODO: show "play again?" after collision []
+    TODO: prevent from going directly in the opposite direction [X]
+-->
 
 <html>
 <canvas id= "snake" width= "800" height= "800"></canvas>
-<head>
+
     <script>
         window.onload= function(){
             canvas= document.getElementById("snake");
@@ -21,12 +24,13 @@
         ax= ay= 15;
         trail = []; //matrix will hold position of snake
         tail = 5;
-        direction = 99; //8: up, 0: down, 9: right, 7: left^
+        direction = "";
         score = 0;
 
         function game(){
             xPos += xVelocity;
             yPos += yVelocity;
+            
             if(xPos < 0){
                 xPos = tileCount-1;
             }
@@ -68,7 +72,6 @@
             ctx.fillRect(ax*gridSize, ay*gridSize, gridSize-2, gridSize-2);
 
         }
-
         function reset(){
             sleep(0.5);
             tail = 5;
@@ -78,58 +81,62 @@
         function setScoreText(){
             document.getElementById("scoreText").innerHTML = "Your Score: " + String(score);
         }
-
         function keyPress(event){
             switch(event.keyCode){
                 case 37: //left
-                    if(direction == 9){
-                        break;
-                    }
-                    else{
-                        direction = 7;
+                    if(!oppositeDirection("left")){
+                        direction = "left";
                         xVelocity = -1;
                         yVelocity = 0;
                         break;
-                    }
-                case 38: //up
-                    if(direction == 0){
+                    } else{
                         break;
                     }
-                    else{
-                        direction = 8;
+                case 38: //up
+                    if(!oppositeDirection("up")){
+                        direction = "up";
                         xVelocity = 0;
                         yVelocity = -1;
                         break;
-                    }
-                case 39: //right
-                    if(direction == 7){
+                    } else{
                         break;
                     }
-                    else{
-                        direction = 9;
+                case 39: //right
+                    if(!oppositeDirection("right")){
+                        direction = "right";
                         xVelocity = 1;
                         yVelocity = 0;
                         break;
-                    }
-                case 40: //down
-                    if(direction == 8){
+                    } else{
                         break;
                     }
-                    else{
-                        direction = 0;
+                case 40: //down
+                    if(!oppositeDirection("down")){
+                        direction = "down";
                         xVelocity = 0;
                         yVelocity = 1;
+                        break;
+                    } else{
                         break;
                     }
             }
         }
+        function oppositeDirection(newDir){
+                if (   (direction.valueOf() == "right".valueOf() && newDir.valueOf() == "left".valueOf())
+                    || (direction.valueOf() == "left".valueOf() && newDir.valueOf() == "right".valueOf())
+                    || (direction.valueOf() == "up".valueOf() && newDir.valueOf() == "down".valueOf())
+                    || (direction.valueOf() == "down".valueOf() && newDir.valueOf() == "up".valueOf())){
+                        console.log("true");
+                        return true;
+                }else{
+                    console.log("false");
+                    return false;
+                }
+            }
         function sleep(seconds){
             e = new Date().getTime() + (seconds * 1000);
             while (new Date().getTime() <= e) {}
         }
     </script>
-</head>
-<body>
-    <h1 id="scoreText" style="margin-left: 300px;">Your Score: 0</h1>
-</body>
+<h1 id="scoreText" style="margin-left: 300px;">Your Score: 0</h1>
 </html>
