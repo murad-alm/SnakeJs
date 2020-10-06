@@ -1,11 +1,12 @@
 <!--
-    TODO: prevent apple respawn on inside trail array []
+    TODO: prevent apple respawn on inside trail array [X]
     TODO: change collision detection method []
     TODO: on collision: show collision before restarting []
     TODO: splash screen []
     TODO: highscore [X]
     TODO: show "play again?" after collision []
     TODO: prevent from going directly in the opposite direction [X]
+    TODO: fix sleep method []
 -->
 
 <html>
@@ -22,7 +23,7 @@
         xVelocity=yVelocity = 0;
         gridSize= 40; tileCount = 20;
         ax= ay= 15;
-        trail = []; //matrix will hold position of snake
+        trail = []; // matrix will hold position of snake
         tail = 5;
         direction = "";
         score = 0;
@@ -31,29 +32,13 @@
             xPos += xVelocity;
             yPos += yVelocity;
             
-            if(xPos < 0){
-                xPos = tileCount-1;
-            }
-            if(xPos > tileCount-1){
-                xPos = 0;
-            }
-            if(yPos < 0){
-                yPos = tileCount-1;
-            }
-            if(yPos > tileCount-1){
-                yPos = 0;
-            }
+            checkOutBorders();
 
             ctx.fillStyle="black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = "lime";
-            for(var i = 0; i < trail.length; i++){
-                ctx.fillRect(trail[i].x*gridSize, trail[i].y*gridSize, gridSize-2, gridSize-2);   
-                if(trail[i].x == xPos && trail[i].y == yPos){
-                    reset();
-                }
-            }
+            checkCollision();
 
             trail.push({x:xPos, y:yPos});
             while(trail.length > tail){
@@ -66,21 +51,66 @@
                 setScoreText();
                 ax = Math.floor(Math.random() * tileCount);
                 ay = Math.floor(Math.random() * tileCount);
+                while(trail.includes((ax, ay))){
+                    document.getElementById("debug").innerHTML = "changed";
+                    ax = Math.floor(Math.random() * tileCount);
+                    ay = Math.floor(Math.random() * tileCount);
+                }
             }
+
+            
 
             ctx.fillStyle = "red";
             ctx.fillRect(ax*gridSize, ay*gridSize, gridSize-2, gridSize-2);
 
         }
+        /*
+         * check for any collisions
+         */
+        function checkCollision(){
+            for(var i = 0; i < trail.length; i++){
+                ctx.fillRect(trail[i].x*gridSize, trail[i].y*gridSize, gridSize-2, gridSize-2);   
+                if(trail[i].x == xPos && trail[i].y == yPos){
+                    reset();
+                }
+            }
+        }
+        /*
+         * check if the snake is outside the borders
+         * and respawn the snake from the other side when it passes any border
+        */
+        function checkOutBorders(){
+            if(xPos < 0){
+                xPos = tileCount-1;
+            }
+            if(xPos > tileCount-1){
+                xPos = 0;
+            }
+            if(yPos < 0){
+                yPos = tileCount-1;
+            }
+            if(yPos > tileCount-1){
+                yPos = 0;
+            }
+        }
+        /*
+         * reset the game after collision
+        */
         function reset(){
             sleep(0.5);
             tail = 5;
             score = 0;
             setScoreText();
         }
+        /* 
+         * set the score text under the game
+        */
         function setScoreText(){
             document.getElementById("scoreText").innerHTML = "Your Score: " + String(score);
         }
+        /* 
+         * handle keydown events and change direction accordingly
+        */
         function keyPress(event){
             switch(event.keyCode){
                 case 37: //left
@@ -121,6 +151,10 @@
                     }
             }
         }
+        /* 
+         * prevent from turning 180°
+         * snake is not allowed to turn back
+        */
         function oppositeDirection(newDir){
                 if (       (direction.valueOf() == "right".valueOf() && newDir.valueOf() == "left".valueOf())
                         || (direction.valueOf() == "left".valueOf() && newDir.valueOf() == "right".valueOf())
@@ -132,11 +166,17 @@
                     console.log("false");
                     return false;
                 }
-            }
+        }
+        /* 
+         * sleep to make thread wait
+        */
         function sleep(seconds){
             e = new Date().getTime() + (seconds * 1000);
             while (new Date().getTime() <= e) {}
         }
     </script>
+
+
 <h1 id="scoreText" style="margin-left: 300px;">Your Score: 0</h1>
+<h2 id="debug" style="margin-left: 300px;">x</h3>
 </html>
