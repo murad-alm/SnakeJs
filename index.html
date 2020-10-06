@@ -122,12 +122,12 @@
             }
         }
         function oppositeDirection(newDir){
-                if (   (direction.valueOf() == "right".valueOf() && newDir.valueOf() == "left".valueOf())
-                    || (direction.valueOf() == "left".valueOf() && newDir.valueOf() == "right".valueOf())
-                    || (direction.valueOf() == "up".valueOf() && newDir.valueOf() == "down".valueOf())
-                    || (direction.valueOf() == "down".valueOf() && newDir.valueOf() == "up".valueOf())){
-                        console.log("true");
-                        return true;
+                if (       (direction.valueOf() == "right".valueOf() && newDir.valueOf() == "left".valueOf())
+                        || (direction.valueOf() == "left".valueOf() && newDir.valueOf() == "right".valueOf())
+                        || (direction.valueOf() == "up".valueOf() && newDir.valueOf() == "down".valueOf())
+                        || (direction.valueOf() == "down".valueOf() && newDir.valueOf() == "up".valueOf())){
+                    console.log("true");
+                    return true;
                 }else{
                     console.log("false");
                     return false;
